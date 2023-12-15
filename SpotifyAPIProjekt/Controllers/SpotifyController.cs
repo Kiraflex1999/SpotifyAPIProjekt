@@ -2,11 +2,12 @@
 
 namespace SpotifyAPIProjekt.Controllers
 {
-    public class AuthController : Controller
+    public class SpotifyController : Controller
     {
+        [HttpPost]
         public IActionResult Index()
         {
-            return View();
+            return View("Auth");
         }
     }
 }

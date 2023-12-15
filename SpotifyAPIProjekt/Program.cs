@@ -23,10 +23,6 @@ namespace SpotifyAPIProjekt
             app.UseAuthorization();
             
             app.MapControllerRoute(
-                name: "auth",
-                pattern: "{controller=Spotify}/{action=Auth}/{id?}");
-
-            app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
