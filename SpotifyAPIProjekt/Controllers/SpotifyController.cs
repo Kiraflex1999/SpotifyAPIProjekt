@@ -2,20 +2,28 @@
 using Newtonsoft.Json;
 using RestSharp;
 using SpotifyAPIProjekt.Models;
-using System.Runtime.CompilerServices;
 
 namespace SpotifyAPIProjekt.Controllers
 {
     public class SpotifyController : Controller
     {
-        private string _ClientId = "bb457095cedf43b4ad05b1b1956f50b8";
-        private string _ClientSecret = "ab285ecc47ba4e008a2a72e797a3c567";
+        private readonly protected string _ClientId = "bb457095cedf43b4ad05b1b1956f50b8";
+        private readonly protected string _ClientSecret = "ab285ecc47ba4e008a2a72e797a3c567";
+
+        private readonly ILogger<SpotifyController> _Logger;
+        private readonly IHttpContextAccessor _Contx;
+
+        public SpotifyController(ILogger<SpotifyController> logger, IHttpContextAccessor contx)
+        {
+            _Logger = logger;
+            _Contx = contx;
+        }
 
         public IActionResult Index()
         {
             var options = new RestClientOptions("https://accounts.spotify.com")
             {
-                MaxTimeout = -1,
+                MaxTimeout = -1, 
             };
             var client = new RestClient(options);
             var request = new RestRequest("/api/token?grant_type=client_credentials&client_id="+_ClientId+"&client_secret="+_ClientSecret, Method.Post);
@@ -26,9 +34,12 @@ namespace SpotifyAPIProjekt.Controllers
 
             AuthModel authModel = JsonConvert.DeserializeObject<AuthModel>(response.Content);
 
-            
+            //Save to Session
 
-            return View("Auth");
+            string sessionString = JsonConvert.SerializeObject(authModel);
+            _Contx.HttpContext.Session.SetString("SpotifySession", sessionString);
+
+            return View("Auth", authModel);
         }
     }
 }
