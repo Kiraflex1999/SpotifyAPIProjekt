@@ -37,9 +37,14 @@ namespace SpotifyAPIProjekt.Controllers
             //Save to Session
 
             string sessionString = JsonConvert.SerializeObject(authModel);
-            _Contx.HttpContext.Session.SetString("SpotifySession", sessionString);
+            _Contx.HttpContext.Session.SetString("SpotifySession", sessionString); // Save Objekt as String
 
             return View("Auth", authModel);
+        }
+
+        public IActionResult Profile()
+        {
+            return View();
         }
     }
 }
