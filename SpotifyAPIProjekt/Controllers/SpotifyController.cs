@@ -2,6 +2,9 @@
 using Newtonsoft.Json;
 using RestSharp;
 using SpotifyAPIProjekt.Models;
+using System.Diagnostics;
+using System.Text;
+using System.Web;
 
 namespace SpotifyAPIProjekt.Controllers
 {
@@ -21,20 +24,46 @@ namespace SpotifyAPIProjekt.Controllers
 
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Auth() 
-        {
             var options = new RestClientOptions("https://accounts.spotify.com")
             {
                 MaxTimeout = -1,
             };
             var client = new RestClient(options);
-            var request = new RestRequest("/authorize?client_id=bb457095cedf43b4ad05b1b1956f50b8&response_type=code&redirect_uri=http://localhost:5100/spotify&state=state&scope=user-read-email user-read-private&show_dialog=true", Method.Get);
-            request.AddHeader("Cookie", "__Host-device_id=AQA5svwtKloABOVYGVQjm2lbOyZfFEv8CG8UzB9cx9NnT1Njq6CJsBGEmgGzTEoP3exaZkLOr0BkD-juRQJ1yxH4_Q2P6_s8hPQ; __Host-sp_csrf_sid=b7c837b883e8b53a9ad9904d56f7781f918dc2b04e6a5d794bac2ebe3dc7b9c9; __Secure-TPASESSION=AQC4uqa4aDE4TwBWX8YlLof9GBjhzuUpxGQz6xzTiJ8n8qo05lY4m7xz++KepNN0j2lIjA/nSyWgAhl49mW5XIjrSGwHbDuHfvw=; inapptestgroup=; sp_sso_csrf_token=013acda719296f10b80f43740c05cffba22ef4dcb331373032393033333337303437; sp_tr=false");
+            var request = new RestRequest("/authorize", Method.Get)
+                .AddParameter("client_id", "bb457095cedf43b4ad05b1b1956f50b8")
+                .AddParameter("response_type", "code")
+                .AddParameter("redirect_uri", "http://localhost:5100/spotify/auth")
+                .AddParameter("scope", "user-read-email user-read-private")
+                .AddParameter("show_dialog", "true")
+                .AddParameter("state", "state");
+            return new RedirectResult(client.BuildUri(request).ToString());
+        }
+
+        public IActionResult Auth(string code) 
+        {
+            byte[] plainBytes = Encoding.UTF8.GetBytes(_ClientId + ":" + _ClientSecret);
+            string base64String = Convert.ToBase64String(plainBytes);
+
+#if DEBUG
+            Console.WriteLine(base64String);
+#endif
+
+            var options = new RestClientOptions("https://accounts.spotify.com")
+            {
+                MaxTimeout = -1,
+            };
+            var client = new RestClient(options);
+            var request = new RestRequest("/api/token", Method.Post)
+                .AddHeader("Content-Type", "application/x-www-form-urlencoded")
+                .AddHeader("Authorization", "Basic " + base64String)
+                .AddParameter("grant_type", "authorization_code")
+                .AddParameter("code", code)
+                .AddParameter("redirect_uri", "http://localhost:5100/spotify/auth");
             RestResponse response = client.ExecuteAsync(request).Result;
+
+#if DEBUG
             Console.WriteLine(response.Content);
+#endif
 
             return View();
         }
