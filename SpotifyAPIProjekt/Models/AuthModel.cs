@@ -1,16 +1,16 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace SpotifyAPIProjekt.Models
 {
     public class AuthModel
     {
-        //[JsonPropertyName("access_token")] doesn't work!
-        public string access_token { get; set; }
+        [JsonProperty("access_token")]
+        public string? AccessToken { get; set; }
 
-        //[JsonPropertyName("token_type")] doesn't work!
-        public string token_type { get; set; }
+        [JsonProperty("token_type")]
+        public string? TokenType { get; set; }
 
-        //[JsonPropertyName("expires_in")] doesn't work!
-        public int expires_in { get; set; }
+        [JsonProperty("expires_in")]
+        public int ExpiresIn { get; set; }
     }
 }

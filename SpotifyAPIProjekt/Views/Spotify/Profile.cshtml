@@ -1,4 +1,4 @@
-﻿
+﻿@model ProfileModel
 @{
     ViewData["Title"] = "Profile Page";
 }
@@ -6,4 +6,8 @@
 <div class="text-center">
     <h1 class="display-4">Profile Page</h1>
     <p><a class="display-6" asp-area="" asp-controller="Spotify" asp-action="Index">Spotify</a></p>
+    <h1 class="display-6">Country: @Model.Country</h1>
+    <h1 class="display-6">Display Name: @Model.DisplayName</h1>
+    <h1 class="display-6">Email: @Model.Email</h1>
+    <h1 class="display-6">Explicit Content: @Model.ExplicitContent</h1>
 </div>

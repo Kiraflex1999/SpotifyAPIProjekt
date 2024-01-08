@@ -5,7 +5,7 @@
 
 <div class="text-center">
     <h1 class="display-4">Auth Page</h1>
-    @*@if (!string.IsNullOrEmpty(Model.access_token))
+    @if (!string.IsNullOrEmpty(Model.AccessToken))
     {
         <h1 class="display-6">AccessToken: True</h1>
     }
@@ -13,7 +13,8 @@
     {
         <h1 class="display-6">AccessToken: False</h1>
     }   
-    <h1 class="display-6">Tokentype: @Model.token_type</h1>
-    <h1 class="display-6">ExpiresIn: @Model.expires_in</h1>*@    
+    <h1 class="display-6">Tokentype: @Model.TokenType</h1>
+    <h1 class="display-6">ExpiresIn: @Model.ExpiresIn</h1>   
     <p><a class="display-6" asp-area="" asp-controller="Spotify" asp-action="Index">Spotify</a></p>
+    <p><a class="display-6" asp-area="" asp-controller="Spotify" asp-action="Profile">Profile</a></p>
 </div>

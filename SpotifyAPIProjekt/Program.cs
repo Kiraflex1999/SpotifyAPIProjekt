@@ -15,7 +15,7 @@ namespace SpotifyAPIProjekt
 
             builder.Services.AddSession(options =>
             {
-                //options.Cookie.Name = ".Spotify.Session";
+                options.Cookie.Name = ".Spotify.Session";
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.IsEssential = true;
             });

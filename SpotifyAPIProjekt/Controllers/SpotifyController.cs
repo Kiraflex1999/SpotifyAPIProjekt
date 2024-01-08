@@ -24,19 +24,26 @@ namespace SpotifyAPIProjekt.Controllers
 
         public IActionResult Index()
         {
-            var options = new RestClientOptions("https://accounts.spotify.com")
+            if (String.IsNullOrEmpty(HttpContext.Session.GetString("expiresAt")) || DateTime.Compare(Convert.ToDateTime(HttpContext.Session.GetString("expiresAt")), DateTime.Now) > 0)
             {
-                MaxTimeout = -1,
-            };
-            var client = new RestClient(options);
-            var request = new RestRequest("/authorize", Method.Get)
-                .AddParameter("client_id", "bb457095cedf43b4ad05b1b1956f50b8")
-                .AddParameter("response_type", "code")
-                .AddParameter("redirect_uri", "http://localhost:5100/spotify/auth")
-                .AddParameter("scope", "user-read-email user-read-private")
-                .AddParameter("show_dialog", "true")
-                .AddParameter("state", "state");
-            return new RedirectResult(client.BuildUri(request).ToString());
+                var options = new RestClientOptions("https://accounts.spotify.com")
+                {
+                    MaxTimeout = -1,
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("/authorize", Method.Get)
+                    .AddParameter("client_id", "bb457095cedf43b4ad05b1b1956f50b8")
+                    .AddParameter("response_type", "code")
+                    .AddParameter("redirect_uri", "http://localhost:5100/spotify/auth")
+                    .AddParameter("scope", "user-read-email user-read-private")
+                    .AddParameter("show_dialog", "true")
+                    .AddParameter("state", "state");
+                return new RedirectResult(client.BuildUri(request).ToString());
+            }
+            else
+            {
+                return View("Auth");
+            }
         }
 
         public IActionResult Auth(string code) 
@@ -46,6 +53,7 @@ namespace SpotifyAPIProjekt.Controllers
 
 #if DEBUG
             Console.WriteLine(base64String);
+            Console.WriteLine();
 #endif
 
             var options = new RestClientOptions("https://accounts.spotify.com")
@@ -63,14 +71,38 @@ namespace SpotifyAPIProjekt.Controllers
 
 #if DEBUG
             Console.WriteLine(response.Content);
+            Console.WriteLine();
 #endif
 
-            return View();
+            AuthModel authModel = JsonConvert.DeserializeObject<AuthModel>(response.Content);
+
+            HttpContext.Session.SetString("accessToken", authModel.AccessToken);
+            HttpContext.Session.SetString("expiresAt", DateTime.Now.AddSeconds(authModel.ExpiresIn).ToString());
+
+            return View(authModel);
         }
 
         public IActionResult Profile()
         {
-            return View();
+            var options = new RestClientOptions("https://api.spotify.com")
+            {
+                MaxTimeout = -1,
+            };
+            var client = new RestClient(options);
+            var request = new RestRequest("/v1/me", Method.Get)
+                .AddHeader("Authorization", "Bearer " + HttpContext.Session.GetString("accessToken"));
+            RestResponse response = client.ExecuteAsync(request).Result;
+
+#if DEBUG
+            Console.WriteLine(HttpContext.Session.GetString("accessToken"));
+            Console.WriteLine();
+            Console.WriteLine(response.Content);
+            Console.WriteLine();
+#endif
+
+            ProfileModel profileModel = JsonConvert.DeserializeObject<ProfileModel>(response.Content);
+
+            return View(profileModel);
         }
     }
 }
