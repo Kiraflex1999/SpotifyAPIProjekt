@@ -35,7 +35,7 @@ namespace SpotifyAPIProjekt.Controllers
                     .AddParameter("client_id", "bb457095cedf43b4ad05b1b1956f50b8")
                     .AddParameter("response_type", "code")
                     .AddParameter("redirect_uri", "http://localhost:5100/spotify/auth")
-                    .AddParameter("scope", "user-read-email user-read-private")
+                    .AddParameter("scope", "user-read-email user-read-private playlist-read-private")
                     .AddParameter("show_dialog", "true")
                     .AddParameter("state", "state");
                 return new RedirectResult(client.BuildUri(request).ToString());
@@ -103,6 +103,29 @@ namespace SpotifyAPIProjekt.Controllers
             ProfileModel profileModel = JsonConvert.DeserializeObject<ProfileModel>(response.Content);
 
             return View(profileModel);
+        }
+
+        public IActionResult Playlist()
+        {
+            var options = new RestClientOptions("https://api.spotify.com")
+            {
+                MaxTimeout = -1,
+            };
+            var client = new RestClient(options);
+            var request = new RestRequest("/v1/me/playlists", Method.Get)
+                .AddHeader("Authorization", "Bearer " + HttpContext.Session.GetString("accessToken"))
+                .AddParameter("limit", 20)
+                .AddParameter("offset", 0);
+            RestResponse response = client.ExecuteAsync(request).Result;
+
+#if DEBUG
+            Console.WriteLine(response.Content);
+            Console.WriteLine();
+#endif
+
+            dynamic playlistModel = JsonConvert.DeserializeObject<dynamic>(response.Content);
+
+            return View(playlistModel);
         }
     }
 }

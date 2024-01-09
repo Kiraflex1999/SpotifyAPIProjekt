@@ -5,9 +5,9 @@ namespace SpotifyAPIProjekt.Models.ProfileModelObjects
     public class ExplicitContent
     {
         [JsonProperty("filter_enabled")]
-        public bool FilterEnabled {  get; set; }
+        public bool? FilterEnabled {  get; set; }
 
         [JsonProperty("filter_locked")]
-        public string FilterLocked { get; set; }
+        public string? FilterLocked { get; set; }
     }
 }
