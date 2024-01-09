@@ -15,6 +15,12 @@ namespace SpotifyAPIProjekt.Controllers
 
         public IActionResult Index()
         {
+            if (String.IsNullOrEmpty(HttpContext.Session.GetString("expiresAt")))
+            {
+
+            }
+
+
             return View();
         }
 

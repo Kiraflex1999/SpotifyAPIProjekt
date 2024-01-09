@@ -9,6 +9,17 @@ namespace SpotifyAPIProjekt
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // https://www.youtube.com/watch?v=6bPeFO10GN4
+
+            builder.Services.AddDistributedMemoryCache();
+
+            builder.Services.AddSession(options =>
+            {
+                options.Cookie.Name = ".Spotify.Session";
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.IsEssential = true;
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -21,10 +32,8 @@ namespace SpotifyAPIProjekt
             app.UseRouting();
 
             app.UseAuthorization();
-            
-            app.MapControllerRoute(
-                name: "auth",
-                pattern: "{controller=Spotify}/{action=Auth}/{id?}");
+
+            app.UseSession();
 
             app.MapControllerRoute(
                 name: "default",
