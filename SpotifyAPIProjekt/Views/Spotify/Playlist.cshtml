@@ -1,0 +1,14 @@
+﻿@model PlaylistModel
+@{
+    ViewData["Title"] = Model.DynamicModel.name;
+}
+
+<div class="text-center">
+    <p><a class="display-6" asp-area="" asp-controller="Spotify" asp-action="Auth">Spotify</a></p>
+    @foreach (var item in Model.DynamicModel.items)
+    {
+        <h1 class="display-4">@item.name</h1>
+    }
+    <p><a class="display-4" asp-area="" asp-controller="Spotify" asp-action="Playlist" asp-route-id="@Model.PlaylistId" asp-route-index="@Model.NextTrackIndex">Next</a></p>
+
+</div>

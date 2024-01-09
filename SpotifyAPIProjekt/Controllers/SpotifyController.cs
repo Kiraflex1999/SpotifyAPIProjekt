@@ -2,9 +2,7 @@
 using Newtonsoft.Json;
 using RestSharp;
 using SpotifyAPIProjekt.Models;
-using System.Diagnostics;
 using System.Text;
-using System.Web;
 
 namespace SpotifyAPIProjekt.Controllers
 {
@@ -126,6 +124,33 @@ namespace SpotifyAPIProjekt.Controllers
             dynamic dynamicModel = JsonConvert.DeserializeObject<dynamic>(response.Content);
 
             return View(dynamicModel);
+        }
+
+        public IActionResult Playlist(string id, int index = 0)
+        {
+            var options = new RestClientOptions("https://api.spotify.com")
+            {
+                MaxTimeout = -1,
+            };
+            var client = new RestClient(options);
+            var request = new RestRequest($"/v1/playlists/{id}/tracks", Method.Get)
+                .AddHeader("Authorization", "Bearer " + HttpContext.Session.GetString("accessToken"))
+                .AddParameter("market", "DE")
+                .AddParameter("offset", index);
+            RestResponse response = client.ExecuteAsync(request).Result;
+
+#if DEBUG
+            Console.WriteLine(response.Content);
+            Console.WriteLine();
+#endif
+
+            dynamic dynamicModel = JsonConvert.DeserializeObject<dynamic>(response.Content);
+
+            index += dynamicModel.items.Count;
+
+            PlaylistModel playlistModel = new PlaylistModel(dynamicModel, id, index);
+
+            return View(playlistModel);
         }
     }
 }

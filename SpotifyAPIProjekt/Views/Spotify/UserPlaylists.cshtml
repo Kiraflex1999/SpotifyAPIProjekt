@@ -7,7 +7,7 @@
     <p><a class="display-6" asp-area="" asp-controller="Spotify" asp-action="Auth">Spotify</a></p>
     @foreach (var item in Model.items)
     {
-        <h1 class="display-4">@item.name</h1>
+        <p><a class="display-4" asp-area="" asp-controller="Spotify" asp-action="Playlist" asp-route-id="@item.id">@item.name</a></p>
     }
 
 </div>
