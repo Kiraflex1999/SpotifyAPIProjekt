@@ -1,6 +1,6 @@
 ﻿namespace SpotifyAPIProjekt.Models
 {
-    public class ProfileModel
+    public class UserPlaylistsModel
     {
 
     }

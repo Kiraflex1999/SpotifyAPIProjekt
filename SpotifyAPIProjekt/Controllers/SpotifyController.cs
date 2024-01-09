@@ -100,12 +100,12 @@ namespace SpotifyAPIProjekt.Controllers
             Console.WriteLine();
 #endif
 
-            ProfileModel profileModel = JsonConvert.DeserializeObject<ProfileModel>(response.Content);
+            dynamic dynamicModel = JsonConvert.DeserializeObject<dynamic>(response.Content);
 
-            return View(profileModel);
+            return View(dynamicModel);
         }
 
-        public IActionResult Playlist()
+        public IActionResult UserPlaylists()
         {
             var options = new RestClientOptions("https://api.spotify.com")
             {
@@ -123,9 +123,9 @@ namespace SpotifyAPIProjekt.Controllers
             Console.WriteLine();
 #endif
 
-            dynamic playlistModel = JsonConvert.DeserializeObject<dynamic>(response.Content);
+            dynamic dynamicModel = JsonConvert.DeserializeObject<dynamic>(response.Content);
 
-            return View(playlistModel);
+            return View(dynamicModel);
         }
     }
 }
